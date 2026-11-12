@@ -1,0 +1,1672 @@
+/* ============================================================
+   ЖИВАЯ ПЛАНЕТА — style.css
+   Пейзаж по времени суток · компактный хаб · медальоны
+   ============================================================ */
+
+/* ---------- Сброс и база ---------- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --text: #eaf2ff;
+    --text-dim: #a9b8d6;
+    --card: rgba(18, 26, 48, 0.72);
+    --card-border: rgba(120, 160, 255, 0.22);
+    --accent: #4fd1c5;
+    --accent-2: #7c5cff;
+    --gold: #ffd166;
+    --danger: #ff5d73;
+    --radius: 18px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --sky-1: #7ec8ff;
+    --sky-2: #bfe6ff;
+    --sky-3: #e8f6ff;
+    --hill-1: #3f8f5a;
+    --hill-2: #2c6b44;
+    --hill-3: #1d4a2f;
+    --sun-color: #fff2b0;
+    --sun-glow: rgba(255, 236, 150, 0.55);
+    --fog: rgba(255, 255, 255, 0.12);
+    --land-text: #0d2033;
+}
+
+body[data-time="morning"] {
+    --sky-1: #ffb3c7;
+    --sky-2: #ffd9c2;
+    --sky-3: #ffeede;
+    --hill-1: #6fa87a;
+    --hill-2: #4d8a5e;
+    --hill-3: #356b45;
+    --sun-color: #fff0c4;
+    --sun-glow: rgba(255, 200, 160, 0.6);
+    --fog: rgba(255, 230, 220, 0.28);
+    --land-text: #2a1a1f;
+}
+
+body[data-time="day"] {
+    --sky-1: #6fc0ff;
+    --sky-2: #a9dcff;
+    --sky-3: #e6f7ff;
+    --hill-1: #4a9a63;
+    --hill-2: #327a4c;
+    --hill-3: #1f5533;
+    --sun-color: #fff6c2;
+    --sun-glow: rgba(255, 240, 170, 0.6);
+    --fog: rgba(255, 255, 255, 0.10);
+    --land-text: #0d2033;
+}
+
+body[data-time="evening"] {
+    --sky-1: #ff8a5c;
+    --sky-2: #c96bd6;
+    --sky-3: #5b3a8f;
+    --hill-1: #5a4a7a;
+    --hill-2: #3f3460;
+    --hill-3: #2a2345;
+    --sun-color: #ffd08a;
+    --sun-glow: rgba(255, 150, 90, 0.55);
+    --fog: rgba(255, 180, 200, 0.18);
+    --land-text: #fff;
+}
+
+body[data-time="night"] {
+    --sky-1: #0b1020;
+    --sky-2: #131a35;
+    --sky-3: #1c2547;
+    --hill-1: #1a2340;
+    --hill-2: #121a30;
+    --hill-3: #0a0f1e;
+    --sun-color: #dfe9ff;
+    --sun-glow: rgba(180, 210, 255, 0.35);
+    --fog: rgba(120, 160, 255, 0.08);
+    --land-text: #eaf2ff;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background: #0b1020;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: background 0.6s ease;
+}
+
+/* ---------- SVG-монета: фиксированный размер! ---------- */
+.coin-ico {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: -2px;
+    flex: 0 0 auto;
+    overflow: visible;
+}
+
+.btn-primary .coin-ico,
+.btn-ghost .coin-ico,
+.shop-buy .coin-ico,
+.quest-claim .coin-ico {
+    width: 14px;
+    height: 14px;
+    vertical-align: -1px;
+}
+
+.coins .coin-ico {
+    width: 18px;
+    height: 18px;
+    vertical-align: -3px;
+}
+
+/* ---------- Фоновый слой ---------- */
+.bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.aurora {
+    position: absolute;
+    width: 80vmax;
+    height: 80vmax;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.45;
+    animation: drift 22s ease-in-out infinite alternate;
+}
+
+.aurora-1 {
+    top: -30vmax;
+    left: -20vmax;
+    background: radial-gradient(circle, #4fd1c5, transparent 60%);
+}
+
+.aurora-2 {
+    bottom: -35vmax;
+    right: -25vmax;
+    background: radial-gradient(circle, #7c5cff, transparent 60%);
+    animation-delay: -7s;
+}
+
+.aurora-3 {
+    top: 20vmax;
+    right: -30vmax;
+    background: radial-gradient(circle, #ff7ab6, transparent 60%);
+    animation-delay: -14s;
+}
+
+@keyframes drift {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(6vmax, -4vmax) scale(1.15);
+    }
+}
+
+#particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
+}
+
+/* ---------- Контейнер экранов ---------- */
+.app {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100dvh;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.screen {
+    position: absolute;
+    inset: 0;
+    padding: calc(10px + var(--safe-top)) 14px calc(10px + var(--safe-bottom));
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+    .screen.active {
+        display: flex;
+    }
+
+/* ============================================================
+   ГЛАВНЫЙ ЭКРАН — ХАБ
+   ============================================================ */
+
+#screen-home {
+    justify-content: space-between;
+}
+
+/* ---------- Пейзаж ---------- */
+.hub-landscape {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.landscape-sky {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 45%, var(--sky-3) 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.6s ease, background 0.6s ease;
+}
+
+.landscape-sun {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    width: 110px;
+    height: 110px;
+    margin-left: -55px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--sun-color) 0%, var(--sun-glow) 45%, transparent 70%);
+    filter: blur(2px);
+    animation: sunPulse 6s ease-in-out infinite alternate;
+    transition: background 0.8s ease, opacity 0.8s ease;
+}
+
+body[data-time="night"] .landscape-sun {
+    opacity: 0;
+}
+
+@keyframes sunPulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+}
+
+.landscape-moon {
+    position: absolute;
+    top: 14%;
+    right: 18%;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff, #cfd8ff 60%, #9aa8d8 100%);
+    box-shadow: 0 0 30px rgba(200, 220, 255, 0.5);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+body[data-time="night"] .landscape-moon {
+    opacity: 1;
+}
+
+.landscape-stars {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background-image: radial-gradient(1px 1px at 20% 30%, #fff, transparent), radial-gradient(1px 1px at 70% 20%, #fff, transparent), radial-gradient(1.5px 1.5px at 40% 60%, #fff, transparent), radial-gradient(1px 1px at 85% 45%, #fff, transparent), radial-gradient(1px 1px at 55% 15%, #fff, transparent), radial-gradient(1.5px 1.5px at 15% 75%, #fff, transparent), radial-gradient(1px 1px at 90% 80%, #fff, transparent);
+    transition: opacity 0.8s ease;
+    animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+body[data-time="night"] .landscape-stars {
+    opacity: 0.9;
+}
+
+@keyframes twinkle {
+    0% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.landscape-hills {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    bottom: 0;
+    height: 42%;
+    background: radial-gradient(ellipse at 30% 100%, var(--hill-1) 0%, transparent 60%), radial-gradient(ellipse at 75% 100%, var(--hill-2) 0%, transparent 65%), linear-gradient(180deg, transparent 0%, var(--hill-3) 100%);
+    transition: background 0.8s ease;
+}
+
+.landscape-trees {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18%;
+    height: 22%;
+    background: radial-gradient(ellipse 18px 40px at 10% 100%, var(--hill-3) 60%, transparent 61%), radial-gradient(ellipse 22px 50px at 22% 100%, var(--hill-2) 60%, transparent 61%), radial-gradient(ellipse 16px 36px at 38% 100%, var(--hill-3) 60%, transparent 61%), radial-gradient(ellipse 24px 54px at 60% 100%, var(--hill-2) 60%, transparent 61%), radial-gradient(ellipse 18px 42px at 78% 100%, var(--hill-3) 60%, transparent 61%), radial-gradient(ellipse 20px 46px at 92% 100%, var(--hill-2) 60%, transparent 61%);
+    opacity: 0.9;
+    transition: background 0.8s ease;
+}
+
+.landscape-fog {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 38%;
+    background: linear-gradient(180deg, transparent 0%, var(--fog) 100%);
+    transition: background 0.8s ease;
+}
+
+/* ---------- Профиль ---------- */
+.profile {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--shadow);
+}
+
+.avatar-wrap {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.avatar-ring {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent));
+    padding: 3px;
+    display: grid;
+    place-items: center;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(10, 16, 32, 0.85);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    overflow: hidden;
+}
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+.arc {
+    display: none;
+}
+
+.arc-badge {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    background: var(--gold);
+    color: #2a1a00;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.plates {
+    display: none;
+}
+
+.pinfo {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.pname {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.plvl {
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 1px;
+}
+
+.rank-progress {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.coins {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    font-size: 15px;
+    background: rgba(255, 209, 102, 0.12);
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    color: var(--gold);
+    padding: 6px 10px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+}
+
+/* ---------- Заголовок / прогресс ---------- */
+.hub-hero {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    margin: 10px 0 4px;
+    color: var(--land-text);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+
+body[data-time="night"] .hub-hero {
+    text-shadow: 0 2px 14px rgba(0,0,0,0.7);
+}
+
+.hub-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.hub-sub {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 2px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.hub-round {
+    margin-top: 14px;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+}
+
+.round-num {
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--land-text);
+    text-shadow: 0 3px 14px rgba(0,0,0,0.3);
+}
+
+.round-of {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.progress-hub {
+    margin: 10px auto 0;
+    width: 78%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .progress-hub > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        border-radius: 8px;
+        transition: width 0.5s ease;
+    }
+
+/* ---------- Питомец на главной ---------- */
+.pet-home {
+    position: relative;
+    z-index: 2;
+    margin: 6px auto;
+    text-align: center;
+    font-size: 44px;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
+    animation: petBob 3s ease-in-out infinite alternate;
+}
+
+@keyframes petBob {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-6px);
+    }
+}
+
+/* ---------- Большая кнопка «Продолжить» ---------- */
+.btn-continue {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    margin: 10px 0 8px;
+    padding: 16px 22px;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    color: #06210f;
+    background: linear-gradient(135deg, #b6ffb0 0%, #4fd1c5 55%, #3fb6ff 100%);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 10px 26px rgba(79, 209, 197, 0.45), inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+    .btn-continue:active {
+        transform: translateY(2px) scale(0.99);
+        box-shadow: 0 5px 14px rgba(79, 209, 197, 0.35);
+    }
+
+/* ---------- Ежедневный бонус ---------- */
+.btn-daily {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.12s ease;
+}
+
+    .btn-daily:active {
+        transform: scale(0.98);
+    }
+
+/* ---------- Медальоны ---------- */
+.medallions {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: auto;
+    padding: 12px 4px 4px;
+    background: linear-gradient(180deg, transparent 0%, rgba(5, 10, 22, 0.55) 100%);
+    border-radius: 22px 22px 0 0;
+}
+
+.medal {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.2s ease;
+    color: var(--text);
+}
+
+    .medal:active {
+        transform: scale(0.94);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+.medal-ico {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.medal-lbl {
+    font-size: 8.5px;
+    letter-spacing: 0.2px;
+    opacity: 0.85;
+    max-width: 60px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Бейдж «!» */
+.badge-new {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    display: none;
+    place-items: center;
+    box-shadow: 0 2px 8px rgba(255, 93, 115, 0.6);
+    animation: badgePulse 1.6s ease-in-out infinite alternate;
+}
+
+    .badge-new[style*="grid"] {
+        display: grid;
+    }
+
+@keyframes badgePulse {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.12);
+    }
+}
+
+/* ============================================================
+   ИГРОВОЙ ЭКРАН
+   ============================================================ */
+
+#screen-game {
+    gap: 8px;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.back-btn {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+    .back-btn:active {
+        transform: scale(0.96);
+    }
+
+.panel {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+}
+
+.theme {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+.grid-wrap {
+    flex: 1 1 auto;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+}
+
+#grid {
+    display: grid;
+    gap: 4px;
+    touch-action: none;
+    user-select: none;
+}
+
+.cell {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    font-size: clamp(12px, 4.2vw, 20px);
+    font-weight: 700;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+    .cell.selected,
+    .cell.sel {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #06121a;
+        transform: scale(1.05);
+    }
+
+    .cell.found {
+        background: rgba(79, 209, 197, 0.18);
+        color: var(--accent);
+        border-color: rgba(79, 209, 197, 0.45);
+    }
+
+    .cell.bonus {
+        background: rgba(255, 209, 102, 0.25);
+        color: var(--gold);
+        border-color: var(--gold);
+    }
+
+    .cell.hint {
+        background: rgba(255, 209, 102, 0.35);
+        border-color: var(--gold);
+        color: #2a1a00;
+        animation: hintPulse 0.6s ease-in-out 4 alternate;
+    }
+
+@keyframes hintPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.08);
+    }
+}
+/* Аварийный фикс свайпа: подсвеченные/выделенные клетки не перехватывают pointer */
+.cell.hint,
+.cell.sel,
+.cell.selected {
+    pointer-events: none;
+}
+
+.fragments {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+    .fragments span,
+    .frag {
+        opacity: 0.55;
+    }
+
+        .fragments span.done,
+        .frag.on {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+.bar {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+    .bar > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        transition: width 0.3s ease;
+    }
+
+.words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+    .words .word {
+        padding: 3px 8px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--card-border);
+    }
+
+        .words .word.found {
+            color: var(--accent);
+            border-color: rgba(79, 209, 197, 0.45);
+            background: rgba(79, 209, 197, 0.1);
+        }
+
+.msg {
+    min-height: 18px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--gold);
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-primary, .btn-ghost {
+    flex: 1 1 0;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.12s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-primary {
+    color: #06210f;
+    background: linear-gradient(135deg, #b6ffb0 0%, #4fd1c5 55%, #3fb6ff 100%);
+    box-shadow: 0 8px 20px rgba(79, 209, 197, 0.35);
+}
+
+.btn-ghost {
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+    .btn-primary:active, .btn-ghost:active {
+        transform: scale(0.97);
+    }
+
+/* ============================================================
+   МОДАЛКА
+   ============================================================ */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5, 10, 22, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+    .overlay.active {
+        display: flex;
+        animation: fadeIn 0.2s ease;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    width: 100%;
+    max-width: 420px;
+    max-height: 82vh;
+    overflow-y: auto;
+    background: rgba(18, 26, 48, 0.96);
+    border: 1px solid var(--card-border);
+    border-radius: 22px;
+    padding: 22px 20px 18px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: modalIn 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes modalIn {
+    from {
+        transform: translateY(20px) scale(0.96);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.modal h2 {
+    font-size: 19px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text);
+}
+
+#modalBody {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+#modalBtn {
+    flex: 0 0 auto;
+}
+
+/* ---------- Магазин ---------- */
+.shop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.shop-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    text-align: left;
+}
+
+.shop-ico {
+    font-size: 22px;
+    flex: 0 0 auto;
+}
+
+.shop-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.shop-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.shop-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.shop-buy {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ---------- Коллекция ---------- */
+.collection-tier {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.collection-tier-head {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 6px;
+}
+
+.coll-card {
+    position: relative;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.2s ease;
+}
+
+    .coll-card:active {
+        transform: scale(0.94);
+    }
+
+    .coll-card:hover {
+        border-color: var(--accent);
+    }
+
+.coll-name {
+    font-size: 9px;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.1;
+}
+
+.coll-count {
+    font-size: 8px;
+    color: var(--text-dim);
+}
+
+.coll-card.lvl-bronze {
+    border-color: #cd7f32;
+}
+
+.coll-card.lvl-silver {
+    border-color: #c0c0c0;
+}
+
+.coll-card.lvl-gold {
+    border-color: #ffd700;
+}
+
+.coll-card.lvl-platinum {
+    border-color: #e5e4e2;
+}
+
+.coll-card.lvl-diamond {
+    border-color: #b9f2ff;
+}
+
+.card-img {
+    border-radius: 6px;
+    object-fit: contain;
+}
+
+.card-ico {
+    line-height: 1;
+}
+
+/* Неполученная карточка — затемнённая, серая */
+.coll-card.locked {
+    opacity: 0.35;
+    filter: grayscale(1);
+    border-color: rgba(120, 160, 255, 0.12);
+}
+
+    .coll-card.locked .coll-name {
+        color: var(--text-dim);
+    }
+
+    .coll-card.locked:hover {
+        opacity: 0.55;
+        border-color: var(--border);
+    }
+
+    .coll-card.locked::after {
+        content: "🔒";
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        font-size: 10px;
+        opacity: 0.9;
+    }
+
+/* ---------- Инфо о карточке ---------- */
+.card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-info-ico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 96px;
+}
+
+.card-info-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.card-info-tier {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card-info-count {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.card-info-fact {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 8px 10px;
+    text-align: left;
+    width: 100%;
+}
+
+.card-info-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+/* ---------- Питомец ---------- */
+.pet-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.pet-big {
+    font-size: 64px;
+    line-height: 1;
+}
+
+.pet-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.pet-mood {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.pet-stats {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pet-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text);
+}
+
+    .pet-stat span {
+        flex: 0 0 96px;
+        text-align: left;
+    }
+
+.pet-bar {
+    flex: 1 1 auto;
+    height: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .pet-bar > div {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        transition: width 0.3s ease;
+    }
+
+.pet-inv {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.pet-actions, .pet-shop-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+    .pet-actions .btn-primary, .pet-shop-row .btn-ghost {
+        flex: 1 1 0;
+    }
+
+.pet-choice {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pet-choice-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 18px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--text);
+}
+
+.pet-choice-ico {
+    font-size: 36px;
+}
+
+.pet-choice-name {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ---------- Квесты ---------- */
+.quest-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    text-align: left;
+}
+
+    .quest-item.done {
+        border-color: rgba(79, 209, 197, 0.5);
+    }
+
+    .quest-item.claimed {
+        opacity: 0.6;
+    }
+
+.quest-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.quest-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.quest-progress {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.quest-claim {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+    .quest-claim:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+/* ---------- Бонус / Календарь / Неделя ---------- */
+.daily-screen, .weekly-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.daily-day {
+    font-size: 14px;
+    color: var(--text-dim);
+}
+
+.daily-reward {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gold);
+}
+
+.weekly-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.weekly-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .weekly-bar > div {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        transition: width 0.3s ease;
+    }
+
+.weekly-progress {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.weekly-done {
+    font-size: 13px;
+    color: var(--accent);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.cal-cell {
+    aspect-ratio: 1 / 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-dim);
+}
+
+    .cal-cell.today {
+        border-color: var(--accent);
+        background: rgba(79, 209, 197, 0.12);
+    }
+
+    .cal-cell.claimed {
+        opacity: 0.4;
+    }
+
+.cal-day {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.cal-ico {
+    font-size: 14px;
+}
+
+/* ---------- Сундук / Достижения ---------- */
+.chest-screen, .ach-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.chest-big {
+    font-size: 64px;
+}
+
+.chest-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.ach-item {
+    width: 100%;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text);
+    text-align: left;
+}
+
+/* ---------- Выбор пола ---------- */
+.gender-choice {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* ============================================================
+   АДАПТИВ
+   ============================================================ */
+
+@media (max-width: 380px) {
+    .hub-title {
+        font-size: 22px;
+    }
+
+    .round-num {
+        font-size: 36px;
+    }
+
+    .medal {
+        width: 56px;
+        height: 56px;
+    }
+
+    .medal-ico {
+        font-size: 19px;
+    }
+
+    .medal-lbl {
+        font-size: 7.5px;
+    }
+
+    .btn-continue {
+        font-size: 17px;
+        padding: 14px 18px;
+    }
+
+    .medallions {
+        gap: 8px;
+    }
+}
+
+@media (min-width: 521px) {
+    .app {
+        box-shadow: 0 0 80px rgba(0,0,0,0.5);
+        border-radius: 24px;
+        margin: 20px auto;
+        height: calc(100dvh - 40px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+/* Сложный уровень (со змейкой) */
+.btn-hard {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    background: linear-gradient(135deg, rgba(124, 92, 255, 0.25), rgba(79, 209, 197, 0.25));
+    border: 1px solid rgba(124, 92, 255, 0.5);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+    .btn-hard:active {
+        transform: scale(0.97);
+    }
+
+    .btn-hard::after {
+        content: "×1.5 награда";
+        font-size: 10px;
+        font-weight: 600;
+        opacity: 0.8;
+        margin-left: 6px;
+        padding: 1px 6px;
+        border-radius: 6px;
+        background: rgba(255, 209, 102, 0.2);
+        color: var(--gold);
+    }
+/* ---------- Питомец: картинка ---------- */
+.pet-big {
+    font-size: 64px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+    .pet-big img,
+    .pet-img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        image-rendering: auto;
+        filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
+    }
+
+.pet-home-ico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+}
+
+.pet-home-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
+}
+/* ---------- Победа ---------- */
+.victory-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.victory-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+}
+
+.victory-reward {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+    .victory-reward .coin-ico {
+        width: 28px;
+        height: 28px;
+    }
+
+.victory-badge {
+    font-size: 13px;
+    color: var(--gold);
+    background: rgba(255, 209, 102, 0.12);
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    padding: 4px 10px;
+    border-radius: 10px;
+}
+
+.victory-level {
+    font-size: 14px;
+    color: var(--text-dim);
+}
+
+.victory-rank {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.victory-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.victory-card-head {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.victory-card-body img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.victory-card-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.victory-card-count {
+    font-size: 11px;
+    color: var(--accent);
+}
+
+.victory-chest {
+    font-size: 14px;
+    color: var(--gold);
+}
+
+.victory-avatar {
+    font-size: 13px;
+    color: var(--text-dim);
+}

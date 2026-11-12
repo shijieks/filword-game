@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0b1020">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Живая планета — филворды</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-time="day">
+
+    <!-- ================= ФОНОВЫЙ СЛОЙ ================= -->
+    <div class="bg-layer" aria-hidden="true">
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
+        <canvas id="particles"></canvas>
+        <div class="vignette"></div>
+    </div>
+
+    <div class="app">
+
+        <!-- ================= ГЛАВНЫЙ ЭКРАН ================= -->
+        <div class="screen active" id="screen-home">
+
+            <!-- Пейзаж по времени суток -->
+            <div class="hub-landscape" id="hubLandscape" aria-hidden="true">
+                <div class="landscape-sky"></div>
+                <div class="landscape-sun"></div>
+                <div class="landscape-moon"></div>
+                <div class="landscape-stars"></div>
+                <div class="landscape-hills"></div>
+                <div class="landscape-trees"></div>
+                <div class="landscape-fog"></div>
+            </div>
+
+            <!-- Компактный профиль -->
+            <div class="profile profile-compact">
+                <div class="avatar-wrap">
+                    <div class="avatar-ring">
+                        <div class="avatar" id="homeAvatar"></div>
+                        <div class="arc" id="rankArc"></div>
+                        <div class="arc-badge" id="rankBadge"></div>
+                    </div>
+                    <div class="plates" id="plates" style="visibility:hidden">
+                        <div class="plate"></div><div class="plate"></div><div class="plate"></div>
+                    </div>
+                </div>
+                <div class="pinfo">
+                    <div class="pname">Игрок</div>
+                    <div class="plvl" id="homeLevel">Уровень 1</div>
+                    <div class="rank-progress" id="rankProgress">Бронза: 1 / 10</div>
+                </div>
+                <div class="coins" id="homeCoins"></div>
+            </div>
+
+            <!-- Заголовок и прогресс -->
+            <div class="hub-hero">
+                <div class="hub-title">🌍 Живая планета</div>
+                <div class="hub-sub">Филворды · коллекция</div>
+                <div class="hub-round">
+                    <div class="round-num" id="hubRoundNum">1</div>
+                    <div class="round-of" id="hubRoundOf">раунд из 2000</div>
+                </div>
+                <div class="progress-hub"><div id="hubProgress"></div></div>
+            </div>
+
+            <!-- Питомец на главной (мини) -->
+            <div class="pet-home" id="petHome" style="display:none"></div>
+
+            <!-- ОДНА главная кнопка -->
+            <button class="btn-continue" id="playBtn">▶ Продолжить игру</button>
+
+            <!-- Сложный уровень (со змейкой) — виден с 41-го -->
+            <button class="btn-ghost btn-hard" id="playHardBtn" style="display:none">🐍 Сложный уровень (со змейкой)</button>
+
+            <!-- Ежедневный бонус — отдельной строкой над медальонами -->
+            <button class="btn-daily" id="dailyBtn">
+                🎁 Ежедневный бонус
+                <span class="badge-new" id="dailyBadge" style="display:none">!</span>
+            </button>
+
+            <!-- Медальоны внизу -->
+            <div class="medallions" id="medallions">
+                <button class="medal" id="petBtn" title="Питомец">
+                    <span class="medal-ico">🐾</span>
+                    <span class="medal-lbl">Питомец</span>
+                    <span class="badge-new" id="petBadge" style="display:none">!</span>
+                </button>
+                <button class="medal" id="cardsBtn" title="Коллекция">
+                    <span class="medal-ico">🎴</span>
+                    <span class="medal-lbl">Карточки</span>
+                    <span class="badge-new" id="cardsBadge" style="display:none">!</span>
+                </button>
+                <button class="medal" id="shopBtn" title="Магазин">
+                    <span class="medal-ico">🛒</span>
+                    <span class="medal-lbl">Магазин</span>
+                </button>
+                <button class="medal" id="questsBtn" title="Квесты">
+                    <span class="medal-ico">📜</span>
+                    <span class="medal-lbl">Квесты</span>
+                    <span class="badge-new" id="questsBadge" style="display:none">!</span>
+                </button>
+                <button class="medal" id="chestBtn" title="Сундук" style="display:none">
+                    <span class="medal-ico">🎁</span>
+                    <span class="medal-lbl">Сундук</span>
+                    <span class="badge-new" id="chestBadge" style="display:none">!</span>
+                </button>
+                <button class="medal" id="calendarBtn" title="Календарь">
+                    <span class="medal-ico">📅</span>
+                    <span class="medal-lbl">Календарь</span>
+                    <span class="badge-new" id="calendarBadge" style="display:none">!</span>
+                </button>
+                <button class="medal" id="weeklyBtn" title="Неделя">
+                    <span class="medal-ico">🏆</span>
+                    <span class="medal-lbl">Неделя</span>
+                    <span class="badge-new" id="weeklyBadge" style="display:none">!</span>
+                </button>
+                <button class="medal" id="achBtn" title="Достижения">
+                    <span class="medal-ico">🏅</span>
+                    <span class="medal-lbl">Достижения</span>
+                    <span class="badge-new" id="achBadge" style="display:none">!</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= ИГРОВОЙ ЭКРАН ================= -->
+        <div class="screen" id="screen-game">
+            <div class="topbar">
+                <button class="back-btn" id="backHomeBtn">← В хаб</button>
+                <div class="topbar-right">
+                    <button class="mute-btn" id="muteBtn" title="Звук">🔊</button>
+                    <div class="coins" id="gameCoins"></div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="theme" id="theme"></div>
+                <div class="grid-wrap"><div id="grid"></div></div>
+                <div class="fragments" id="frags"></div>
+                <div class="bar"><div id="progress"></div></div>
+                <div class="words" id="words"></div>
+                <div class="msg" id="msg"></div>
+                <div class="controls">
+                    <button class="btn-primary" id="hintBtn">💡 Подсказка · 5 <span id="hintCoin"></span></button>
+                    <button class="btn-ghost" id="restartBtn">↻ Заново</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА ================= -->
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <h2 id="modalTitle"></h2>
+            <div id="modalBody"></div>
+            <button class="btn-primary" id="modalBtn" style="padding:12px 20px;border-radius:12px;font-size:14px;">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- ================= СКРИПТЫ (порядок важен!) ================= -->
+    <!-- 1. VK Bridge (внешний CDN) — ПЕРВЫМ -->
+    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+    <!-- 2. platform.js — после VK Bridge, до state.js -->
+    <script src="platform.js"></script>
+    <!-- 3. Остальные — как было -->
+    <script src="data.js"></script>
+    <script src="levels.js"></script>
+    <script src="state.js"></script>
+    <script src="sound.js"></script>
+    <script src="game.js"></script>
+    <script src="ui.js"></script>
+    <script src="bg.js"></script>
+
+</body>
+</html>
